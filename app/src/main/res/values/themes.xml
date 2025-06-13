@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.MagicAppV2" parent="Theme.MaterialComponents.DayNight.NoActionBar"/>
+    <style name="Theme.MagicAppV2.Fullscreen" parent="Theme.MagicAppV2">
+        <item name="android:actionBarStyle">@style/Widget.Theme.MagicAppV2.ActionBar.Fullscreen
+        </item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@null</item>
+    </style>
+
+    <style name="ThemeOverlay.MagicAppV2.FullscreenContainer" parent="">
+        <item name="fullscreenBackgroundColor">@color/light_blue_600</item>
+        <item name="fullscreenTextColor">@color/light_blue_A200</item>
+    </style>
+
+</resources>

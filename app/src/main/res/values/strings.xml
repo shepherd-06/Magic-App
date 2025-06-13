@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MagicAppV2</string>
+    <string name="navigation_drawer_open">Open drawer</string>
+    <string name="navigation_drawer_close">Close drawer</string>
+    <string name="title_activity_arcamera_acitivity">ARCameraAcitivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+</resources>
