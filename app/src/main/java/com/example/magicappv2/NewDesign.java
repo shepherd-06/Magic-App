@@ -12,6 +12,10 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -33,6 +37,7 @@ public class NewDesign extends AppCompatActivity {
     // UI Elements
     private View barNorth, barSouth, barEast, barWest, barNE, barNW, barSE, barSW;
     private TextView statusText;
+    private ProgressBar progressBar;
 
     // Sensor
     private SensorManager sensorManager;
@@ -60,6 +65,7 @@ public class NewDesign extends AppCompatActivity {
         initLocation();
     }
 
+    @SuppressLint("SetTextI18n")
     private void initUI() {
         barNorth = findViewById(R.id.barNorth);
         barSouth = findViewById(R.id.barSouth);
@@ -70,6 +76,8 @@ public class NewDesign extends AppCompatActivity {
         barSE = findViewById(R.id.barSouthEast);
         barSW = findViewById(R.id.barSouthWest);
         statusText = findViewById(R.id.statusText);
+        progressBar = findViewById(R.id.progress_circular);
+        statusText.setText("Hold Your Horses! Calculation is on-going... ");
     }
 
     private void initSensors() {
@@ -149,6 +157,10 @@ public class NewDesign extends AppCompatActivity {
     private void updateDirection() {
         if (userLocation == null) return;
 
+        if (progressBar.getVisibility() == View.VISIBLE) {
+            progressBar.setVisibility(View.GONE);
+            pikapikaanimation();
+        }
         double userLat = userLocation.getLatitude();
         double userLon = userLocation.getLongitude();
 
@@ -159,8 +171,10 @@ public class NewDesign extends AppCompatActivity {
 
         if (distance > 1000) {
             statusText.setText(String.format("Target too far (%.1f m) away to direct correctly!", distance));
-        } else {
+        } else if (distance > 50) {
             statusText.setText(String.format("Distance: %.1f m\nDirection: %s", distance, sector));
+        } else {
+            statusText.setText(String.format("We are getting closer!\nDistance: %.1f m\nDirection: %s", distance, sector));
         }
 
         Log.d("DIRECTION", "Azimuth: " + azimuth + ", Relative: " + relativeAngle);
@@ -235,5 +249,11 @@ public class NewDesign extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(sensorListener);
+    }
+
+    private void pikapikaanimation() {
+        ImageView bubble = findViewById(R.id.waterBubble);
+        Animation pulse = AnimationUtils.loadAnimation(this, R.anim.bubble_pulse);
+        bubble.startAnimation(pulse);
     }
 }
