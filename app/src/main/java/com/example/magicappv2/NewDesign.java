@@ -8,8 +8,11 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -21,6 +24,7 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -30,7 +34,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-import com.google.android.material.snackbar.Snackbar;
+
+
 
 public class NewDesign extends AppCompatActivity {
 
@@ -54,6 +59,9 @@ public class NewDesign extends AppCompatActivity {
     // Target Coordinates
     private static final double TARGET_LAT = 61.4543633;
     private static final double TARGET_LON = 23.851835;
+
+    private Vibrator vibrator;
+    private double lastVibrationCheckpoint = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +92,7 @@ public class NewDesign extends AppCompatActivity {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
     }
 
     private void initLocation() {
@@ -160,6 +169,7 @@ public class NewDesign extends AppCompatActivity {
         if (progressBar.getVisibility() == View.VISIBLE) {
             progressBar.setVisibility(View.GONE);
             pikapikaanimation();
+            triggerVibration();
         }
         double userLat = userLocation.getLatitude();
         double userLon = userLocation.getLongitude();
@@ -178,9 +188,86 @@ public class NewDesign extends AppCompatActivity {
         }
 
         Log.d("DIRECTION", "Azimuth: " + azimuth + ", Relative: " + relativeAngle);
-
+        handleVibrationLogic(distance);  // ✅ insert vibration handler here
         showBar(sector);
     }
+
+    private void handleVibrationLogic(double distance) {
+        long currentTime = System.currentTimeMillis();
+        if (distance > 50) {
+            if (currentTime - lastVibrationCheckpoint >= 3000) {
+                lastVibrationCheckpoint = currentTime;
+                triggerVibration();
+            }
+        } else {
+            if (lastVibrationCheckpoint == -1 || (currentTime - lastVibrationCheckpoint) >= 3000) {
+                lastVibrationCheckpoint = currentTime;
+                triggerVibration();
+            }
+        }
+    }
+
+    private void triggerVibration() {
+        if (vibrator == null) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                vibrator.vibrate(generateRandomVibration());
+            } else {
+                int randomVal = (int)(Math.random() * 1000);
+                VibrationEffect.createOneShot(randomVal, VibrationEffect.DEFAULT_AMPLITUDE);
+            }
+        } else {
+            // Fallback for pre-Q devices
+            vibrator.vibrate((int)(Math.random() * 1000));
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    private VibrationEffect generateRandomVibration() {
+        int randomVal = (int)(Math.random() * 10);  // 0 to 9
+
+        switch (randomVal) {
+            case 1: return VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK);
+            case 2: return VibrationEffect.createPredefined(VibrationEffect.EFFECT_TICK);
+            case 3: return VibrationEffect.createPredefined(VibrationEffect.EFFECT_DOUBLE_CLICK);
+            case 4: return VibrationEffect.createPredefined(VibrationEffect.EFFECT_HEAVY_CLICK);
+            case 5: {
+                VibrationEffect.Composition composition = null;
+                composition = VibrationEffect.startComposition()
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, 1f)
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_TICK, 0.5f);
+                return composition.compose();
+            }
+            case 6: {
+                VibrationEffect.Composition composition = null;
+                composition = VibrationEffect.startComposition()
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_THUD, 1f)
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_TICK, 1f);
+
+                return composition.compose();
+            }
+            case 7: {
+                VibrationEffect.Composition composition = VibrationEffect.startComposition()
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_SPIN, 0.7f)
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_CLICK, 0.5f);
+                return composition.compose();
+            }
+            case 8: {
+                VibrationEffect.Composition composition = VibrationEffect.startComposition()
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_QUICK_RISE, 1f)
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_SLOW_RISE, 0.8f);
+                return composition.compose();
+            }
+            case 9: {
+                VibrationEffect.Composition composition = VibrationEffect.startComposition()
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_LOW_TICK, 1f)
+                        .addPrimitive(VibrationEffect.Composition.PRIMITIVE_SLOW_RISE, 0.8f);
+                return composition.compose();
+            }
+            default: return VibrationEffect.createOneShot(300, VibrationEffect.DEFAULT_AMPLITUDE);
+        }
+    }
+
 
     private void showBar(String sector) {
         hideAllBars();
