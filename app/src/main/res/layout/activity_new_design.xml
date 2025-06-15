@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFEAAE"
+    tools:context=".NewDesign">
+
+    <!-- Top AR Radar Area -->
+    <FrameLayout
+        android:id="@+id/radarContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.5">
+
+        <!-- Circular shiny water bubble -->
+        <ImageView
+            android:id="@+id/waterBubble"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:contentDescription="TODO"
+            android:src="@drawable/water_bubble"
+            android:scaleType="centerCrop"
+            android:elevation="10dp"/>
+
+        <!-- North -->
+        <View
+            android:id="@+id/barNorth"
+            android:layout_width="100dp"
+            android:layout_height="16dp"
+            android:layout_gravity="top | center"
+            android:background="@drawable/rounded"
+            android:visibility="invisible"/>
+
+        <!-- South -->
+        <View
+            android:id="@+id/barSouth"
+            android:layout_width="100dp"
+            android:layout_height="16dp"
+            android:layout_gravity="bottom |center"
+            android:background="@drawable/rounded"
+            android:visibility="invisible"/>
+
+        <!-- East -->
+        <View
+            android:id="@+id/barEast"
+            android:layout_width="16dp"
+            android:layout_height="100dp"
+            android:layout_gravity="end |center"
+            android:background="@drawable/rounded"
+            android:visibility="invisible"/>
+
+        <!-- West -->
+        <View
+            android:id="@+id/barWest"
+            android:layout_width="16dp"
+            android:layout_height="100dp"
+            android:layout_gravity="start | center"
+            android:background="@drawable/rounded"
+            android:visibility="invisible"
+            />
+
+        <!-- North-East -->
+        <View
+            android:id="@+id/barNorthEast"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="top|end"
+            android:background="#731DD8"
+            android:visibility="invisible"/>
+
+        <!-- North-West -->
+        <View
+            android:id="@+id/barNorthWest"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="top|start"
+            android:background="#731DD8"
+            android:visibility="invisible"
+            />
+
+        <!-- South-East -->
+        <View
+            android:id="@+id/barSouthEast"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="bottom|end"
+            android:background="#731DD8"
+            android:visibility="invisible"/>
+
+        <!-- South-West -->
+        <View
+            android:id="@+id/barSouthWest"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="bottom|start"
+            android:background="#731DD8"
+            android:visibility="invisible"
+            />
+
+    </FrameLayout>
+
+    <!-- Bottom TextView -->
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Waiting..."
+        android:textColor="#30011E"
+        android:textSize="18dp"
+        android:gravity="top"
+        android:layout_weight="0.5"
+        android:background="#E4DFDA"
+        />
+</LinearLayout>

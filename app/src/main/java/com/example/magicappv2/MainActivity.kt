@@ -13,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
     private lateinit var mainBtn: Button
+    private lateinit var anotherBtn: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
         mainBtn = findViewById(R.id.mainBtn)
+        anotherBtn = findViewById(R.id.anotherBtn)
+
 
         // Setup Hamburger Toggle
         val toggle = ActionBarDrawerToggle(
@@ -45,6 +48,11 @@ class MainActivity : AppCompatActivity() {
 
         mainBtn.setOnClickListener {
             val intent = Intent(this, ARCameraActivity::class.java)
+            startActivity(intent)
+        }
+
+        anotherBtn.setOnClickListener {
+            val intent = Intent(this, NewDesign::class.java)
             startActivity(intent)
         }
     }
