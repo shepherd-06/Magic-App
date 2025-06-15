@@ -59,6 +59,8 @@ public class NewDesign extends AppCompatActivity {
     // Target Coordinates
     private static final double TARGET_LAT = 61.4543633;
     private static final double TARGET_LON = 23.851835;
+    private double simulatedTargetLat = TARGET_LAT;
+    private double simulatedTargetLon = TARGET_LON;
 
     private Vibrator vibrator;
     private double lastVibrationCheckpoint = -1;
@@ -128,6 +130,7 @@ public class NewDesign extends AppCompatActivity {
             assert userLocation != null;
             Log.d("LOCATION", "Received: " + userLocation.getLatitude() + "," + userLocation.getLongitude());
 
+            simulateTargetMovement();
         }
     };
 
@@ -174,10 +177,10 @@ public class NewDesign extends AppCompatActivity {
         double userLat = userLocation.getLatitude();
         double userLon = userLocation.getLongitude();
 
-        double bearing = calculateBearing(userLat, userLon, TARGET_LAT, TARGET_LON);
+        double bearing = calculateBearing(userLat, userLon, simulatedTargetLat, simulatedTargetLon);
         double relativeAngle = (bearing - azimuth + 360) % 360;
         String sector = mapAngleToSector(relativeAngle);
-        double distance = calculateDistance(userLat, userLon, TARGET_LAT, TARGET_LON);
+        double distance = calculateDistance(userLat, userLon, simulatedTargetLat, simulatedTargetLon);
 
         if (distance > 1000) {
             statusText.setText(String.format("Target too far (%.1f m) away to direct correctly!", distance));
@@ -342,5 +345,19 @@ public class NewDesign extends AppCompatActivity {
         ImageView bubble = findViewById(R.id.waterBubble);
         Animation pulse = AnimationUtils.loadAnimation(this, R.anim.bubble_pulse);
         bubble.startAnimation(pulse);
+    }
+
+    private void simulateTargetMovement() {
+        // Max shift: ~0.00002 degrees ≈ 2 meters roughly
+        double maxDelta = 0.00002;
+
+        // Random small movement in both directions
+        double latShift = (Math.random() - 0.5) * 2 * maxDelta;
+        double lonShift = (Math.random() - 0.5) * 2 * maxDelta;
+
+        simulatedTargetLat += latShift;
+        simulatedTargetLon += lonShift;
+
+        Log.d("SIMULATED_TARGET", "Lat: " + simulatedTargetLat + " Lon: " + simulatedTargetLon);
     }
 }
