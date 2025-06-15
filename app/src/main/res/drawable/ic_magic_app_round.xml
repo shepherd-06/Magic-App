@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Perfect round base -->
+    <path
+        android:fillColor="#6A0DAD"
+        android:pathData="M54,0 A54,54 0 1,1 54,108 A54,54 0 1,1 54,0 Z" />
+
+    <!-- Soft glow -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.15"
+        android:pathData="M54,12 A42,42 0 1,1 54,96 A42,42 0 1,1 54,12 Z" />
+
+    <!-- Magic compass -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M54,22 L64,54 L54,86 L44,54 Z" />
+
+    <!-- Star sparkle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M82,30
+            L85,36
+            L91,38
+            L85,40
+            L82,46
+            L79,40
+            L73,38
+            L79,36
+            Z" />
+</vector>
