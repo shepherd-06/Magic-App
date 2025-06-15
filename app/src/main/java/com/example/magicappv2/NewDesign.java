@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -25,6 +26,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.snackbar.Snackbar;
 
 public class NewDesign extends AppCompatActivity {
 
@@ -104,8 +106,7 @@ public class NewDesign extends AppCompatActivity {
 
     private final LocationCallback locationCallback = new LocationCallback() {
         @Override
-        public void onLocationResult(LocationResult locationResult) {
-            if (locationResult == null) return;
+        public void onLocationResult(@NonNull LocationResult locationResult) {
             userLocation = locationResult.getLastLocation();
             assert userLocation != null;
             Log.d("LOCATION", "Received: " + userLocation.getLatitude() + "," + userLocation.getLongitude());
@@ -144,7 +145,7 @@ public class NewDesign extends AppCompatActivity {
         public void onAccuracyChanged(Sensor sensor, int accuracy) { }
     };
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "DefaultLocale"})
     private void updateDirection() {
         if (userLocation == null) return;
 
@@ -156,7 +157,12 @@ public class NewDesign extends AppCompatActivity {
         String sector = mapAngleToSector(relativeAngle);
         double distance = calculateDistance(userLat, userLon, TARGET_LAT, TARGET_LON);
 
-        statusText.setText(String.format("Distance: %.1f m\nDirection: %s", distance, sector));
+        if (distance > 1000) {
+            statusText.setText(String.format("Target too far (%.1f m) away to direct correctly!", distance));
+        } else {
+            statusText.setText(String.format("Distance: %.1f m\nDirection: %s", distance, sector));
+        }
+
         Log.d("DIRECTION", "Azimuth: " + azimuth + ", Relative: " + relativeAngle);
 
         showBar(sector);
@@ -178,8 +184,9 @@ public class NewDesign extends AppCompatActivity {
         }
 
         if (targetBar != null) {
-            targetBar.animate().alpha(1f).setDuration(250).start();
+//            targetBar.setAlpha(0f);
             targetBar.setVisibility(View.VISIBLE);
+            targetBar.animate().alpha(1f).setDuration(1500).start();
         }
     }
 
