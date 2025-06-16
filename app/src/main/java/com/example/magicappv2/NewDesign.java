@@ -57,8 +57,8 @@ public class NewDesign extends AppCompatActivity {
     private Location userLocation;
 
     // Target Coordinates
-    private static final double TARGET_LAT = 61.4543633;
-    private static final double TARGET_LON = 23.851835;
+    private static final double TARGET_LAT = 61.4927794;
+    private static final double TARGET_LON = 23.7772398;
     private double simulatedTargetLat = TARGET_LAT;
     private double simulatedTargetLon = TARGET_LON;
 
