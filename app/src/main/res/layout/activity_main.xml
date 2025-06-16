@@ -26,6 +26,15 @@
             />
 
         <Button
+            android:id="@+id/userLoc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Send Loc"
+            android:textAlignment="center"
+            />
+
+        <Button
             android:id="@+id/mainBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

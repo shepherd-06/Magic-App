@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navView: NavigationView
     private lateinit var mainBtn: Button
     private lateinit var anotherBtn: Button
+    private lateinit var userLoc: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +24,7 @@ class MainActivity : AppCompatActivity() {
         navView = findViewById(R.id.nav_view)
         mainBtn = findViewById(R.id.mainBtn)
         anotherBtn = findViewById(R.id.anotherBtn)
+        userLoc = findViewById(R.id.userLoc)
 
 
         // Setup Hamburger Toggle
@@ -53,6 +55,11 @@ class MainActivity : AppCompatActivity() {
 
         anotherBtn.setOnClickListener {
             val intent = Intent(this, NewDesign::class.java)
+            startActivity(intent)
+        }
+
+        userLoc.setOnClickListener {
+            val intent = Intent(this, UserLocation::class.java)
             startActivity(intent)
         }
     }

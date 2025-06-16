@@ -2,6 +2,7 @@ package com.example.magicappv2
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -13,6 +14,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -63,7 +67,7 @@ class AddUrlActivity : AppCompatActivity() {
                                 putString("storedUrl", url)
                                 putString("storedName", name)
                             }
-                            showSnackbar("Name and URL saved successfully.")
+                            registerUser(url, name, sharedPref)
                         } else {
                             showSnackbar("URL validation failed. Cannot save.")
                         }
@@ -93,6 +97,58 @@ class AddUrlActivity : AppCompatActivity() {
         } catch (e: Exception) {
             e.printStackTrace()
             false
+        }
+    }
+
+    private fun registerUser(url: String, name: String, sharedPref: android.content.SharedPreferences) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = callCreateUser("$url/api/create_user", name)
+            withContext(Dispatchers.Main) {
+                progressBar.visibility = View.GONE
+                if (response != null) {
+                    sharedPref.edit {
+                        putString("userId", response)
+                    }
+                    showSnackbar("Registration successful. UserId: $response")
+                } else {
+                    sharedPref.edit { clear() }
+                    showSnackbar("Failed to register user.")
+                }
+            }
+        }
+    }
+
+    private fun callCreateUser(fullUrl: String, name: String): String? {
+        return try {
+            val url = URL(fullUrl)
+            val conn = url.openConnection() as HttpURLConnection
+            conn.requestMethod = "POST"
+            conn.doOutput = true
+            conn.setRequestProperty("Content-Type", "application/json")
+
+            val payload = JSONObject()
+            payload.put("username", name)
+
+            conn.outputStream.use { os ->
+                os.write(payload.toString().toByteArray())
+                os.flush()
+            }
+
+            val responseCode = conn.responseCode
+
+            if (responseCode == 201) {
+                val response = BufferedReader(InputStreamReader(conn.inputStream)).use { it.readText() }
+                val json = JSONObject(response)
+                conn.disconnect()
+                json.getString("userId")
+            } else {
+                Log.d("callToCreateUser", "responseCode $responseCode")
+                conn.disconnect()
+                null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 
