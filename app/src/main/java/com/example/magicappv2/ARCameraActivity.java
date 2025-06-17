@@ -78,7 +78,9 @@ public class ARCameraActivity extends AppCompatActivity {
                     azimuth = (azimuth == 0f) ? newAzimuth :
                             (SMOOTHING_ALPHA * newAzimuth + (1 - SMOOTHING_ALPHA) * azimuth);
 
-                    updateDirection();
+                    float pitch = (float) Math.toDegrees(orientation[1]);  // <- This is pitch in degrees
+
+                    updateDirectionWithPitch(pitch);
                 }
             }
         }
@@ -86,6 +88,7 @@ public class ARCameraActivity extends AppCompatActivity {
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy) { }
     };
+
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -211,6 +214,57 @@ public class ARCameraActivity extends AppCompatActivity {
                 // Target visible
                 redDot.setX((float) offsetX - redDot.getWidth() / 2f);
                 redDot.setY(previewView.getHeight() / 2f - redDot.getHeight() / 2f);
+                redDot.setVisibility(View.VISIBLE);
+                leftEdgeBar.setVisibility(View.INVISIBLE);
+                rightEdgeBar.setVisibility(View.INVISIBLE);
+            } else {
+                redDot.setVisibility(View.INVISIBLE);
+                if (finalAngleOffset > 0) {
+                    rightEdgeBar.setVisibility(View.VISIBLE);
+                    leftEdgeBar.setVisibility(View.INVISIBLE);
+                } else {
+                    leftEdgeBar.setVisibility(View.VISIBLE);
+                    rightEdgeBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+    }
+
+    @SuppressLint({"DefaultLocale", "SetTextI18n"})
+    private void updateDirectionWithPitch(float pitch) {
+        double userLat = 61.49625;
+        double userLon = 23.7769451;
+        double bearingToTarget = calculateBearing(userLat, userLon, TARGET_LAT, TARGET_LON);
+        double relativeAngle = (bearingToTarget - azimuth + 360) % 360;
+
+        double angleOffset = relativeAngle;
+        if (angleOffset > 180) angleOffset -= 360;
+        angleOffset = Math.max(-90, Math.min(90, angleOffset));
+
+        double screenCenterX = previewView.getWidth() / 2.0;
+        double maxOffsetX = screenCenterX - 100;
+        double offsetX = screenCenterX + (angleOffset / 90.0) * maxOffsetX;
+
+        // Pitch to vertical shift:
+        double screenCenterY = previewView.getHeight() / 2.0;
+        double pitchOffsetY = screenCenterY - (pitch / 45.0) * (screenCenterY - 200);  // Tuned
+
+        double finalAngleOffset = angleOffset;
+        runOnUiThread(() -> {
+            overlayText.setText(String.format("Heading: %.0f°\nTarget: %.0f°\nDelta: %.0f°\nPitch: %.1f°",
+                    azimuth, bearingToTarget, relativeAngle, pitch));
+
+            if (Math.abs(finalAngleOffset) > 160) {
+                overlayText.setText("🔄 Target behind you");
+                redDot.setVisibility(View.INVISIBLE);
+                leftEdgeBar.setVisibility(View.INVISIBLE);
+                rightEdgeBar.setVisibility(View.INVISIBLE);
+                return;
+            }
+
+            if (Math.abs(finalAngleOffset) < ANGLE_THRESHOLD) {
+                redDot.setX((float) offsetX - redDot.getWidth() / 2f);
+                redDot.setY((float) pitchOffsetY - redDot.getHeight() / 2f);
                 redDot.setVisibility(View.VISIBLE);
                 leftEdgeBar.setVisibility(View.INVISIBLE);
                 rightEdgeBar.setVisibility(View.INVISIBLE);

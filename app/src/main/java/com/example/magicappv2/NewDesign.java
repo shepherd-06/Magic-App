@@ -26,6 +26,10 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.camera.core.CameraSelector;
+import androidx.camera.core.Preview;
+import androidx.camera.lifecycle.ProcessCameraProvider;
+import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -34,7 +38,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
-
+import com.google.common.util.concurrent.ListenableFuture;
 
 
 public class NewDesign extends AppCompatActivity {
@@ -51,6 +55,9 @@ public class NewDesign extends AppCompatActivity {
     private float azimuth = 0f;
     private float smoothedAzimuth = 0f;
     private static final float SMOOTHING_ALPHA = 0.15f;
+
+    private PreviewView cameraPreview;
+    private ProcessCameraProvider cameraProvider;
 
     // Location
     private FusedLocationProviderClient fusedLocationClient;
@@ -87,6 +94,9 @@ public class NewDesign extends AppCompatActivity {
         barSW = findViewById(R.id.barSouthWest);
         statusText = findViewById(R.id.statusText);
         progressBar = findViewById(R.id.progress_circular);
+        cameraPreview = findViewById(R.id.cameraPreview);
+
+        startCamera();
         statusText.setText("Hold Your Horses! Calculation is on-going... ");
     }
 
@@ -193,6 +203,26 @@ public class NewDesign extends AppCompatActivity {
         Log.d("DIRECTION", "Azimuth: " + azimuth + ", Relative: " + relativeAngle);
         handleVibrationLogic(distance);  // ✅ insert vibration handler here
         showBar(sector);
+    }
+
+    private void startCamera() {
+        ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
+        cameraProviderFuture.addListener(() -> {
+            try {
+                cameraProvider = cameraProviderFuture.get();
+                bindCamera();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, ContextCompat.getMainExecutor(this));
+    }
+
+    private void bindCamera() {
+        cameraProvider.unbindAll();
+        Preview preview = new Preview.Builder().build();
+        CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
+        preview.setSurfaceProvider(cameraPreview.getSurfaceProvider());
+        cameraProvider.bindToLifecycle(this, cameraSelector, preview);
     }
 
     private void handleVibrationLogic(double distance) {

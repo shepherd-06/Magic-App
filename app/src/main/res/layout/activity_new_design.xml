@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#FFEAAE"
     tools:context=".NewDesign">
 
     <!-- Top AR Radar Area -->
@@ -14,7 +13,13 @@
         android:id="@+id/radarContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5">
+        android:layout_weight="0.9">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/cameraPreview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
 
         <!-- Circular shiny water bubble -->
         <ImageView
@@ -25,6 +30,7 @@
             android:contentDescription="TODO"
             android:src="@drawable/water_bubble"
             android:scaleType="centerCrop"
+            android:visibility="gone"
             android:elevation="10dp"/>
 
         <!-- North -->
@@ -121,7 +127,7 @@
         android:textColor="#30011E"
         android:textSize="18dp"
         android:gravity="top"
-        android:layout_weight="0.5"
+        android:layout_weight="0.1"
         android:background="#E4DFDA"
         />
 
