@@ -12,9 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
-    private lateinit var mainBtn: Button
     private lateinit var anotherBtn: Button
-    private lateinit var userLoc: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
-        mainBtn = findViewById(R.id.mainBtn)
         anotherBtn = findViewById(R.id.anotherBtn)
-        userLoc = findViewById(R.id.userLoc)
 
 
         // Setup Hamburger Toggle
@@ -43,23 +39,18 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this, AddUrlActivity::class.java)
                     startActivity(intent)
                 }
+
+                R.id.nav_send_loc -> {
+                    val intent = Intent (this, UserLocation::class.java)
+                    startActivity(intent)
+                }
             }
             drawerLayout.closeDrawers()
             true
         }
 
-        mainBtn.setOnClickListener {
-            val intent = Intent(this, ARCameraActivity::class.java)
-            startActivity(intent)
-        }
-
         anotherBtn.setOnClickListener {
             val intent = Intent(this, NewDesign::class.java)
-            startActivity(intent)
-        }
-
-        userLoc.setOnClickListener {
-            val intent = Intent(this, UserLocation::class.java)
             startActivity(intent)
         }
     }

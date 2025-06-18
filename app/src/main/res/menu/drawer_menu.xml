@@ -4,4 +4,16 @@
         android:id="@+id/nav_add_url"
         android:title="Add URL"
         android:icon="@android:drawable/ic_menu_add"/>
+
+    <item
+        android:id="@+id/nav_send_loc"
+        android:title="Send User Location"
+        android:icon="@android:drawable/ic_menu_directions"/>
+
+    <item
+        android:id="@+id/nav_fake_loc"
+        android:title="Mock Internal Location"
+        android:icon="@android:drawable/ic_popup_disk_full"/>
+
+
 </menu>

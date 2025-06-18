@@ -23,6 +23,7 @@
             android:layout_height="wrap_content"
             android:text="I am good I am feeling alright!"
             android:textSize="32dp"
+            android:visibility="gone"
             />
 
         <Button
@@ -32,6 +33,7 @@
             android:layout_margin="16dp"
             android:text="Send Loc"
             android:textAlignment="center"
+            android:visibility="gone"
             />
 
         <Button
@@ -40,16 +42,19 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:text="We are Rolling!"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:visibility="gone"
+            />
 
         <Button
             android:id="@+id/anotherBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Howl's moving castle."
+            android:text="Track Your Friend"
             android:textAlignment="center"
-            android:background="#D67AB1"
+            android:backgroundTint="#D67AB1"
+            android:textColor="@color/black"
             />
 
 
