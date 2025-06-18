@@ -2,6 +2,7 @@ package com.example.magicappv2;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,6 +15,7 @@ import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -32,6 +34,7 @@ import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -39,6 +42,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.navigation.NavigationView;
 import com.google.common.util.concurrent.ListenableFuture;
 
 
@@ -48,6 +52,9 @@ public class NewDesign extends AppCompatActivity {
     private View barNorth, barSouth, barEast, barWest, barNE, barNW, barSE, barSW;
     private TextView statusText;
     private ProgressBar progressBar;
+
+    private DrawerLayout drawerLayout;
+    private NavigationView navView;
 
     // Sensor
     private SensorManager sensorManager;
@@ -99,8 +106,30 @@ public class NewDesign extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_circular);
         cameraPreview = findViewById(R.id.cameraPreview);
 
-        statusText.setText("Hold Your Horses! Calculation is on-going... ");
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navView = findViewById(R.id.nav_view);
+
+        statusText.setText("Calculations in progress. Thank you for your patience.");
+
+//        drawers onClick Listener
+
+        // Set drawer listener (if needed)
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.nav_add_url) {
+                    startActivity(new Intent(NewDesign.this, AddUrlActivity.class));
+                } else if (id == R.id.nav_send_loc) {
+                    startActivity(new Intent(NewDesign.this, UserLocation.class));
+                }
+
+                drawerLayout.closeDrawers();
+                return true;
+            }
+        });
     }
+
 
     private void initSensors() {
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
@@ -111,12 +140,12 @@ public class NewDesign extends AppCompatActivity {
 
     private void initLocation() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             startLocationUpdates();
         } else {
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION); // Fine includes coarse if granted
         }
-        Log.d("Pika Paka", "vroom");
     }
 
     private final ActivityResultLauncher<String> permissionLauncher =
@@ -126,10 +155,11 @@ public class NewDesign extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
+        boolean fineGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
         LocationRequest request = new LocationRequest.Builder(
-                Priority.PRIORITY_HIGH_ACCURACY, 3000L)  // interval millis
+                fineGranted ? Priority.PRIORITY_HIGH_ACCURACY : Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                3000L)
                 .setMinUpdateIntervalMillis(2000L)
-                .setWaitForAccurateLocation(true)
                 .build();
 
         fusedLocationClient.requestLocationUpdates(request, locationCallback, Looper.getMainLooper());
