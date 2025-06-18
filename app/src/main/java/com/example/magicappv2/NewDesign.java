@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -80,6 +81,8 @@ public class NewDesign extends AppCompatActivity {
         initUI();
         initSensors();
         initLocation();
+
+        startCamera();
     }
 
     @SuppressLint("SetTextI18n")
@@ -96,7 +99,6 @@ public class NewDesign extends AppCompatActivity {
         progressBar = findViewById(R.id.progress_circular);
         cameraPreview = findViewById(R.id.cameraPreview);
 
-        startCamera();
         statusText.setText("Hold Your Horses! Calculation is on-going... ");
     }
 
@@ -215,6 +217,15 @@ public class NewDesign extends AppCompatActivity {
                 e.printStackTrace();
             }
         }, ContextCompat.getMainExecutor(this));
+    }
+
+
+    private void stopCamera() {
+        if (cameraProvider != null) {
+            cameraProvider.unbindAll();
+            cameraProvider = null;
+            Log.d("Camera", "Camera stopped and resources released.");
+        }
     }
 
     private void bindCamera() {
