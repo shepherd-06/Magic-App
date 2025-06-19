@@ -110,7 +110,7 @@
             android:layout_height="32dp"
             android:layout_gravity="bottom|start"
             android:background="#731DD8"
-            android:visibility="visible"
+            android:visibility="invisible"
             />
 
     </FrameLayout>

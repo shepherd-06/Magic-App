@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -220,7 +219,12 @@ public class NewDesign extends AppCompatActivity {
         double userLon = userLocation.getLongitude();
 
         double bearing = calculateBearing(userLat, userLon, simulatedTargetLat, simulatedTargetLon);
-        double relativeAngle = (bearing - azimuth + 360) % 360;
+//        the code is commented to calculate from the center of the screen
+//        double relativeAngle = (bearing - azimuth + 360) % 360;
+        float cameraOffsetDegrees = 90f; // tweak this value experimentally if needed
+        float adjustedAzimuth = (azimuth + cameraOffsetDegrees) % 360;
+
+        double relativeAngle = (bearing - adjustedAzimuth + 360) % 360;
         String sector = mapAngleToSector(relativeAngle);
         double distance = calculateDistance(userLat, userLon, simulatedTargetLat, simulatedTargetLon);
 
